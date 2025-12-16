@@ -3,6 +3,7 @@ const app = express();
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const path = require('path');
 const axios = require('axios');
 
 app.use(cors());
@@ -93,6 +94,19 @@ io.on('connection', (socket) => {
         socket.leave();
     });
 });
+
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+const __dirname1 = path.resolve();
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname1, '/client/build')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname1, 'client', 'build', 'index.html'));
+    });
+}
+// ----------------------------------------------------------------
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
