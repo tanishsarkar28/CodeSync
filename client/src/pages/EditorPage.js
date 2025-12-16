@@ -71,7 +71,7 @@ const EditorPage = () => {
     const runCode = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_URL || http://localhost:5000/compile', {
+            const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/compile`, {
                 code: codeRef.current,
                 language: language // --- Send selected language ---
             });
