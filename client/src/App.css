@@ -1,0 +1,33 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: #1c1e29; /* Dark Background */
+    color: #fff;
+    overflow: hidden; /* Scrollbar hatane ke liye */
+}
+
+/* --- SABSE IMPORTANT FIX --- */
+/* Editor ko poori jagah lene ke liye force karna */
+.CodeMirror {
+    min-height: 100%;
+    height: 100% !important;
+    font-size: 16px;
+    line-height: 1.6;
+    padding-top: 10px;
+}
+
+/* Button Animations */
+.btn {
+    transition: all 0.3s ease;
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.btn:active {
+    transform: translateY(0);
+}
