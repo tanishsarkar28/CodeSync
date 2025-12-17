@@ -37,11 +37,21 @@ io.on('connection', (socket) => {
         });
     });
 
-    // --- FIX IS HERE (Typing Issue) ---
+    // --- CODE CHANGE EVENT (Typing Fix) ---
     socket.on('code-change', ({ roomId, code }) => {
-        // Hum 'socket.in' use kar rahe hain taaki code sirf 'dusron' ko jaye
+        // 'socket.in' use kar rahe hain taaki code sirf 'dusron' ko jaye
         // 'io.to' use karne se code wapas sender ko bhi aa raha tha, jisse atak raha tha
         socket.in(roomId).emit('code-change', { code });
+    });
+
+    // --- CURSOR MOVE EVENT (Name Tag Feature) ---
+    socket.on('cursor-change', ({ roomId, cursor }) => {
+        // Sirf dusre logo ko batana hai ki mera cursor kahan hai
+        socket.in(roomId).emit('cursor-update', {
+            socketId: socket.id,
+            cursor,
+            username: userSocketMap[socket.id] // Username bhi bhej rahe hain taaki tag dikha sakein
+        });
     });
 
     socket.on('sync-code', ({ socketId, code }) => {
