@@ -8,10 +8,10 @@ import 'codemirror/mode/clike/clike';   // C, C++, Java support
 import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/closebrackets';
 
-// Props mein 'languageOption' add kiya
 const Editor = ({ socketRef, roomId, onCodeChange, languageOption }) => {
     const editorRef = useRef(null);
 
+    // 1. Editor Initialize karna
     useEffect(() => {
         async function init() {
             if (editorRef.current) return;
@@ -19,7 +19,7 @@ const Editor = ({ socketRef, roomId, onCodeChange, languageOption }) => {
             editorRef.current = Codemirror.fromTextArea(
                 document.getElementById('realtimeEditor'),
                 {
-                    mode: { name: 'javascript', json: true }, // Default
+                    mode: { name: 'javascript', json: true },
                     theme: 'dracula',
                     autoCloseTags: true,
                     autoCloseBrackets: true,
@@ -27,28 +27,28 @@ const Editor = ({ socketRef, roomId, onCodeChange, languageOption }) => {
                 }
             );
 
+            // Local Change Handler
             editorRef.current.on('change', (instance, changes) => {
                 const { origin } = changes;
                 const code = instance.getValue();
                 onCodeChange(code);
                 
+                // Agar humne type kiya hai, toh server ko bhejo
+                // 'setValue' tab hota hai jab server se code aata hai (usko wapas server nahi bhejna)
                 if (origin !== 'setValue') {
-                    if (socketRef && socketRef.current) {
-                        socketRef.current.emit('code-change', {
-                            roomId,
-                            code,
-                        });
-                    }
+                    socketRef.current.emit('code-change', {
+                        roomId,
+                        code,
+                    });
                 }
             });
         }
         init();
     }, []);
 
-    // Jab Language change ho, tab Editor ka mode badal do
+    // 2. Language Change Handle karna
     useEffect(() => {
         if (editorRef.current) {
-            // Mapping dropdown value to CodeMirror modes
             let mode = 'javascript';
             if (languageOption === 'python') mode = 'python';
             if (languageOption === 'java') mode = 'text/x-java';
@@ -59,16 +59,33 @@ const Editor = ({ socketRef, roomId, onCodeChange, languageOption }) => {
         }
     }, [languageOption]);
 
+    // 3. Socket se Code Receive karna (Cursor Jumping Fix)
     useEffect(() => {
-        if (socketRef && socketRef.current) {
+        if (socketRef.current) {
             socketRef.current.on('code-change', ({ code }) => {
-                if (code !== null) {
-                    editorRef.current.setValue(code);
+                if (code !== null && editorRef.current) {
+                    
+                    const currentCode = editorRef.current.getValue();
+                    
+                    // Agar naya code purane se alag hai, tabhi update karein
+                    if (code !== currentCode) {
+                        // A. Cursor aur Scroll ki position save karo
+                        const cursor = editorRef.current.getCursor();
+                        const scrollInfo = editorRef.current.getScrollInfo();
+
+                        // B. Value update karo
+                        editorRef.current.setValue(code);
+
+                        // C. Cursor aur Scroll wapas wahin set karo
+                        editorRef.current.setCursor(cursor);
+                        editorRef.current.scrollTo(scrollInfo.left, scrollInfo.top);
+                    }
                 }
             });
         }
+
         return () => {
-            if (socketRef && socketRef.current) {
+            if (socketRef.current) {
                 socketRef.current.off('code-change');
             }
         };
