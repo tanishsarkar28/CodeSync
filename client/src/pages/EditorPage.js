@@ -103,7 +103,7 @@ const EditorPage = () => {
             <div className="aside" style={{width: '250px', background: '#0d1117', color: 'white', display: 'flex', flexDirection: 'column', padding: '20px', borderRight: '1px solid #30363d'}}>
                 <div className="asideInner" style={{flex: 1}}>
                     <div style={{display:'flex', alignItems:'center', gap:'10px', marginBottom:'25px', paddingBottom:'15px', borderBottom:'1px solid #30363d'}}>
-                        <img src="/logo192.png" alt="logo" style={{height:'35px'}}/> 
+                        <img src="/logo.png" alt="logo" style={{height:'35px'}}/> 
                         <span style={{fontWeight:'700', fontSize:'20px', letterSpacing:'1px'}}>CodeSync</span>
                     </div>
                     
